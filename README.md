@@ -3,9 +3,11 @@
 Tagteam's scFv tools - simplified as much as possible for experimentalist high throughput computational design.
 
 Just a nerd who likes antibody design and helping.
-TODO:
-  -scFv-ification
-  -pipeline
+TODO: 
+- Requirements
+- Python 3.9, Biopy, ANARCI, MPNN,
+- scFv-ification
+- pipeline
 
 
 --JD
