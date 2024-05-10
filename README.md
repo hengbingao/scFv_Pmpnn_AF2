@@ -4,8 +4,8 @@ Tagteam's scFv tools - simplified as much as possible for experimentalist high t
 
 Just a nerd who likes antibody design and helping.
 TODO:
--scFv-ification
--pipeline
+  -scFv-ification
+  -pipeline
 
 
 --JD
