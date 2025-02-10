@@ -47,9 +47,7 @@ If you’d like to use any other sequence besides the default, this is easily ch
 `MEVKLVESGGDLVKPGGSLKLSCAASGFTFSSYGMSWVRQTPDKRLEWVATISRGGSYTYYPDSVKGRFTISRDNAKNTLYLQMSSLKSEDTAMYYCARRETYDEKGFAYWGQGTTVTVSS__science_is_cool__DIELTQSPSSLTVTAGEKVTMSCKSSQSLLNSGNQKNYLTWYQQKPGQPPKLLIYWASTRESGVPDRFTGSGSGRDFTLTISSVQAEDLAVYYCQNDNSHPLTFGAGTKLELK`
 
 If you’d like to save your sequence to a file, use the `--output` flag.
-`scfv_anarci.py HA.fasta --output HA_scfv` 
-
-Will produce the file `HA_scfv.fasta` with sequence title `>HA_scfv`. And if we look inside that file:
+`scfv_anarci.py HA.fasta --output HA_scfv` Will produce the file `HA_scfv.fasta` with sequence title `>HA_scfv`. And if we look inside that file:
 ```
 $ cat HA_scfv.fasta
 
@@ -74,7 +72,7 @@ The fourth and final one is `structure` . This takes a structure based approach 
 
 `to_design="framework"` What are we redesigning during this run? This was put in to help with other projects from the Snow, Geiss, and Stasevich labs. `to_design` is only allowed to be 1 of 3 things: `framework` to redesign the framework of the scFv, `loops` to redesign the loops of the scFv, and `lss` to redesign both the loops and the secondary shell of the loops (all residues within 4A of the loops, modified by `simple_grab`). 
 
-`PMPNN='path/to/my/ProteinMPNN` Path to the ProteinMPNN directory 
+`PMPNN='path/to/my/ProteinMPNN'` Path to the ProteinMPNN directory 
 
 In the output directory, there are 4 key files to look at (continuing our HA example):
 `HA_noWT.fa` contains all of the framework designed sequences that are produced.
