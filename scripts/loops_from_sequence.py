@@ -8,24 +8,37 @@ from scipy.spatial.distance import cdist
 from collections import defaultdict
 
 
-def loops_from_sequence(input_seq, numbering='kabat'):
+def loops_from_sequence(input_seq, numbering='kabat', linker_seq=''):
     sequences = [("id1", input_seq)] 
-
+    #print(sequences)
     # Run ANARCI
     # this `results` product is the *worst* data structure I have ever seen in my life -- JD
+    if '?' in sequences[0][1]:
+        return None
     results = anarci(sequences, scheme=numbering)
     
-    # Kabat numbering for Heavy Chain CDRs
-    # numbers for loops citation: https://www.novoprolabs.com/tools/cdr
-    cdr_h1 = [str(i) for i in range(31, 36)]
-    cdr_h2 = [str(i) for i in range(50, 66)]
-    cdr_h3 = [str(i) for i in range(95, 103)]
-    
-    # Kabat numbering for Light Chain CDRs
-    cdr_l1 = [str(i) for i in range(24, 35)]
-    cdr_l2 = [str(i) for i in range(50, 57)]
-    cdr_l3 = [str(i) for i in range(89, 98)]
-    
+    if numbering.lower() == 'kabat' or numbering.lower() == 'chothia':
+        # Kabat numbering for Heavy Chain CDRs
+        # numbers for loops citation: https://www.novoprolabs.com/tools/cdr
+        cdr_h1 = [str(i) for i in range(32, 37)]
+        cdr_h2 = [str(i) for i in range(51, 67)]
+        cdr_h3 = [str(i) for i in range(96, 104)]
+        
+        # Kabat numbering for Light Chain CDRs
+        cdr_l1 = [str(i) for i in range(25, 36)]
+        cdr_l2 = [str(i) for i in range(51, 58)]
+        cdr_l3 = [str(i) for i in range(90, 99)]
+
+    elif numbering.lower() == 'martin':
+        cdr_h1 = [str(i) for i in range(31, 37)]
+        cdr_h2 = [str(i) for i in range(48, 60)]
+        cdr_h3 = [str(i) for i in range(96, 103)]
+
+        # Kabat numbering for Light Chain CDRs
+        cdr_l1 = [str(i) for i in range(30, 37)]
+        cdr_l2 = [str(i) for i in range(47, 57)]
+        cdr_l3 = [str(i) for i in range(90, 99)]
+
     # Define all CDRs in a dictionary for easy reference
     cdr_loops = {
         'H': {
@@ -39,7 +52,21 @@ def loops_from_sequence(input_seq, numbering='kabat'):
             'CDR L3': cdr_l3
         }
     }
-    
+
+
+    if linker_seq == '':
+        linker_seqs = ['GGGGSGGGGSGGGGS', 'GGSGGSGGSGGSGGS', 'GSGSGSGSGSGSGS', 'GGGSGGGSGGGSGGS', 'GGGSGGGSGGGS']
+        for i, ls in enumerate(linker_seqs):
+            linker_start = input_seq.find(ls)
+            if linker_start != -1:
+                linker_seq = ls
+                break 
+
+
+    linker_idx = list(range(linker_start, linker_start+len(linker_seq)))
+    #out_linker = ''.join([input_seq[x] for x in linker_idx])
+
+
 
     all_loops  = []
     num_chains = len(results[0][0])
@@ -78,12 +105,28 @@ def loops_from_sequence(input_seq, numbering='kabat'):
         
         for loop, data in loop_seqs.items():
             seq, resis = data
+    
+            # fix Kimberly bug - dels in loops
+            if '-' in seq:
+                new_seq = ''
+                new_resis = []
+
+                for s, r in zip(seq, resis):
+                    if s != '-':
+                        new_seq += s
+                        new_resis.append(r)
+
+                seq = new_seq
+                new_resis = resis
+
+
+
             seq_n = len(seq)
             start = input_seq.find(seq)
 
             for i in range(start, start+seq_n):
                 all_loops.append(i)
-    
+    #print(all_loops) 
 
     return all_loops
 
@@ -195,7 +238,7 @@ def fill_gaps_and_remove_isolated_residues(residues):
     return sorted(final_residues)
 
 
-def find_close_residues_in_longest_chain(file_path, input_residue_ids, dist=4):
+def find_close_residues_in_longest_chain(file_path, input_residue_ids, dist=3):
     chains = parse_pdb_file(file_path)
     # Identify the longest chain
     longest_chain_id = max(chains.keys(), key=lambda k: len(set([res[0] for res in chains[k]])))
@@ -211,6 +254,7 @@ def find_close_residues_in_longest_chain(file_path, input_residue_ids, dist=4):
             if calculate_distance(atom_pos, atom_pos_l) <= dist:
                 close_residues.add(res_num)
 
+            
     # Optionally process the results to fill gaps and remove isolated residues, if required
     return fill_gaps_and_remove_isolated_residues(list(close_residues)), longest_chain_id
 
@@ -264,7 +308,7 @@ def find_close_residues(pdb_path, input_residues):
 '''
 
 
-def find_close_residues(pdb_file_path, residues, cutoff=4.0):
+def find_close_residues(pdb_file_path, residues, cutoff=3.0):
     """
     Find neighboring residues within a given cutoff distance from a list of input residues.
 
@@ -346,17 +390,68 @@ def get_longest_chain_length(pdb_path):
 
     # Find the longest chain by comparing the size of residue sets
     longest_chain_length = max((len(residues) for residues in chain_residues.values()), default=0)
+    longest_chain_id = max(chain_residues, key=lambda k: len(chain_residues[k]), default=None)
 
-    return longest_chain_length
+
+    return longest_chain_length, longest_chain_id
+
+
+def extract_sequence_from_pdb(pdb_file_path):
+
+    three_to_one = {
+        "ALA": "A", "CYS": "C", "ASP": "D", "GLU": "E", "PHE": "F",
+        "GLY": "G", "HIS": "H", "ILE": "I", "LYS": "K", "LEU": "L",
+        "MET": "M", "ASN": "N", "PRO": "P", "GLN": "Q", "ARG": "R",
+        "SER": "S", "THR": "T", "VAL": "V", "TRP": "W", "TYR": "Y"
+    }
+
+
+    sequences = {}
+    seen_residues = set()
+
+    with open(pdb_file_path, 'r') as file:
+        for line in file:
+            if line.startswith("ATOM"):
+                res_name = line[17:20].strip()
+                chain_id = line[21].strip()
+                res_seq = line[22:26].strip()
+                res_id = (chain_id, res_seq)
+
+                if res_id not in seen_residues:
+                    amino_acid = three_to_one[res_name]
+                    if amino_acid:
+                        if chain_id not in sequences:
+                            sequences[chain_id] = []
+                        sequences[chain_id].append(amino_acid)
+                        seen_residues.add(res_id)
+
+    # Join sequences of each chain with a colon separator
+    final_sequence = ':'.join(''.join(sequences[chain_id]) for chain_id in sorted(sequences.keys()))
+
+    return final_sequence
+
+
+def str2bool(v):
+    if isinstance(v, bool):
+        return v
+    if v.lower() in ('yes', 'true', 't', 'y', '1'):
+        return True
+    elif v.lower() in ('no', 'false', 'f', 'n', '0'):
+        return False
+    else:
+        raise argparse.ArgumentTypeError('Boolean value expected.')
 
 
 def main():
 
     # I haven't tested it, but I almost promise this breaks if input is anything other than a PDB
     parser = argparse.ArgumentParser(description="returns an index of the CDR loops as identified by ANARCI.")
-    parser.add_argument("fasta_file", type=str,                  help="Path to the fasta file to identify CDR loops")
-    parser.add_argument("--verbose",  action='store_true',       help="True/False: print PyMOL selection logic.")
-    parser.add_argument("--scheme",   type=str, default="kabat", help="How do we want to number the antibody H/L chains? Default = kabat.")
+    parser.add_argument("fasta_file",    type=str,                             help="Path to the fasta file to identify CDR loops")
+    parser.add_argument("--verbose",     action='store_true',                  help="True/False: print PyMOL selection logic.")
+    parser.add_argument("--scheme",      type=str,      default="kabat",       help="How do we want to number the antibody H/L chains? Default = kabat.")
+    parser.add_argument("--dist",        type=float,    default=3,             help="cutoff distance to ID the Vernier zone residues structurally. Defualt = 3A")
+    parser.add_argument('--simple_grab', type=str2bool, nargs='?', const=True, default=False, help="A boolean option.")
+    parser.add_argument("--linker-seq",  type=str,      default='',            help="specificed linker seq. If not specified, will try to automatically detect. ")
     parser.add_argument("--output", choices=['loops', 'lss', 'framework'],
                     help="Output option: loops, lss (loops AND secondary shell [aka Vernier zone region]), or framework.", default='framework')
 
@@ -380,20 +475,69 @@ def main():
     all_loops = []
     # sequence-wise find all loops
     for seq in seqs:
-        all_loops += loops_from_sequence(seq, numbering=args.scheme)
 
-    # sequence-wise find secondary shell (unformally ID the vernier zone region)
+        if args.linker_seq == '':
+            #print('no input seq detected! Trying my default linkers...')
+            linker_seqs = ['GGGGSGGGGSGGGGS', 'GGSGGSGGSGGSGGS', 'GSGSGSGSGSGSGS', 'GGGSGGGSGGGSGGS', 'GGGSGGGSGGGS']
+            for i, ls in enumerate(linker_seqs):
+                linker_start = seq.find(ls)
+                if linker_start != -1:
+                    linker_seq = ls
+                    break
+        else:
+            linker_start = seq.find(ls)
+            linker_seq = args.linker_seq
+
+
+        if linker_start == -1:
+            print('I cant find any linkers! Please specify one for me.')
+            print(f'scFv sequence: {seq}')
+            
+            if linker_seq != '':
+                print(f'given linker seq: {args.linker_seq}')
+
+            sys.exit()
+
+        #else:
+        #    print(f'found linker sequence: {linker_seq}')
+
+
+        new_loops = loops_from_sequence(seq, numbering=args.scheme)
+        if new_loops == None:
+            continue
+        else:
+            all_loops += new_loops
+
+        if linker_start == -1:
+            print('I couldnt find a linker sequence! Try specifying one for me?')
+            print(f'I detected the following sequence(s): {seqs}')
+            sys.exit()
+        
+        
+        linker_idx = list(range(linker_start, linker_start+len(linker_seq)))
+        
+
+# sequence-wise find secondary shell (unformally ID the vernier zone region)
     if args.fasta_file.split('.')[-1] == 'pdb':
 
+        length, ch_id   = get_longest_chain_length(args.fasta_file)
         a = []
         # extra here
-        [a.append(f'{x}A') for x in all_loops]    
-        residues = find_close_residues(args.fasta_file, a, cutoff=4)
-        vernier_and_loops = fill_gaps_and_remove_isolated_residues(residues)
-        length   = get_longest_chain_length(args.fasta_file)
+        [a.append(f'{x}{ch_id}') for x in all_loops]    
+        residues = find_close_residues(args.fasta_file, a, cutoff=args.dist)
+
+        if args.simple_grab == False:
+            vernier = fill_gaps_and_remove_isolated_residues(residues)
+        else:
+            vernier = residues
+            #print('simple')
+
+        vernier_and_loops = [x for x in vernier if x not in linker_idx]
         all_resi = list(range(1, length+1))
 
-    framework = [x for x in all_resi if x not in vernier_and_loops]
+    linker_idx = [x+1 for x in linker_idx]
+    #framework = [x for x in all_resi if x not in vernier_and_loops]
+    framework = [x for x in all_resi if x not in vernier_and_loops and x not in linker_idx]
 
     if   args.output == 'loops':
         out = all_loops
@@ -415,9 +559,16 @@ def main():
         a = "+".join(str(x) for x in framework)
         print('framework:')
         print(f'select resi {a}\n')
+        #print('######################################################')
+
+        a = "+".join(str(x) for x in linker_idx)
+        print('linker:')
+        print(f'select resi {a}\n')
         print('######################################################')
+
+
     a = " ".join(str(x) for x in out)
     print(a)
-    return out
+    #return out
 if __name__ == "__main__":
     main()
