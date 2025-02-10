@@ -25,7 +25,7 @@ This pipeline was written with ease of use in mind. There are two scripts worth 
 ### scFv-ification of an antibody
 An scFv (single chain variable fragment) is an antibody with only the CDR loops and variable region framework, of both the constant and heavy chains. A flexible linker is then used to combine the remaining regions to create and a single chain domain. The process of doing this is tedious and time consuming by hand; identify the CDR regions, identify the variable and constant regions, and stitch them together. For both speed and consistency, a script was written to quickly automate this process.
 
-Let’s use the hemaglutanin (HA) Heavy and Light chains for our example, called `HA.fasta` :
+Let’s use the hemagglutinin (HA) Heavy and Light chains for our example, called `HA.fasta` :
 ```
 >HA_heavy
 MKLPVLLVVLLLFTSPASSSEVKLVESGGDLVKPGGSLKLSCAASGFTFSSYGMSWVRQTPDKRLEWVATISRGGSYTYYPDSVKGRFTISRDNAKNTLYLQMSSLKSEDTAMYYCARRETYDEKGFAYWGQGTTVTVSSARPTAPSVYPLAPVCGDTTGSSVTLGCLVKGYFPEPVTLTWNSGSLSSGVHTFPAVLQSDLYTLSSSVTVTSSTWPSQSITCNVAHPASSTKVDKKIEPRGPTIKPCPPCKCPAPNLLGGPSVFIFPPKIKDVLMISLSPIVTCVVVDVSEDDPDVQISWFVNNVEVHTAQTQTHREDYNSTLRVVSALPIQHQDWMSGKEFKCKVNNKDLPAPIERTISKPKGSVRAPQVYVLPPPEEEMTKKQVTLTCMVTDFMPEDIYVEWTNNGKTELNYKNTEPVLDSDGSYFMYSKLRVEKKNWVERNSYSCSVVHEGLHNHHTTKSFSRTPGK
