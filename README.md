@@ -1,4 +1,4 @@
-![scFv Colored by 3 regions](images/F1.large.jpeg "Graphical Abstract Intro Code")
+![scFv Colored by 3 regions](images/F1.large.jpg "Graphical Abstract Intro Code")
 
 # **AI-assisted protein design to rapidly convert antibody sequences to intrabodies targeting diverse peptides and histone modifications** 
 
