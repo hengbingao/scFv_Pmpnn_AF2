@@ -52,10 +52,11 @@ echo "will process $fastas"
 
 
 # ensure we're in right env
-if [ "$CONDA_DEFAULT_ENV" != "pmpnn" ]; then
-    source /home/tagteam/anaconda3/etc/profile.d/conda.sh
-    conda activate pmpnn
-fi
+# this is my env - ignored for prod
+# if [ "$CONDA_DEFAULT_ENV" != "pmpnn" ]; then
+#     source /home/tagteam/anaconda3/etc/profile.d/conda.sh
+#     conda activate pmpnn
+# fi
 
 
 if [ "$pdb_count" -gt 0 ]; then
@@ -106,13 +107,10 @@ echo "finished moving $fastas"
 for dir in "$folder_with_pdbs"/*; do
     dir=${dir%/}
     echo "Processing directory $dir"
-    # Space to begin work on each pdb file
-    # Add your commands here
+
     pdb_file=$(find "$dir" -type f -name "*.pdb")
     if [ -n "$pdb_file" ]; then
         echo "Found PDB file: $pdb_file"
-        # Space to begin work on the pdb file
-        # Add your commands here
     else
         echo "No PDB file found in $dir"
     fi
@@ -158,9 +156,10 @@ for dir in "$folder_with_pdbs"/*; do
             --fixed_positions_jsonl $path_for_fixed_positions \
             --out_folder $output_dir \
             --num_seq_per_target $seqs_per_run \
-            --sampling_temp "0.1" \
+            --sampling_temp "0.1" \ 
             --seed 37 \
-            --batch_size 1
+            --batch_size 1 \
+	    --use_soluble_model 
 
     # make fasta files of just the WT and the ProteinMPNN sequences for folding purposes.
     trimmed=$(basename "$dir")
