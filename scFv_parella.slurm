@@ -43,6 +43,6 @@ echo "Using CPUs: $SLURM_CPUS_PER_TASK"
 # ========================================
 # 运行你的主程序
 # ========================================
-bash af2_pmpnn_parella_ifjump_scfv.sh "$TARGET_DIR"
+bash af2_pmpnn_parallel.sh "$TARGET_DIR"
 
 echo "[$(date)] Finished processing $TARGET_DIR"
