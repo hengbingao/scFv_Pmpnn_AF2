@@ -24,47 +24,34 @@ conda remove --name scFv --all
 conda create -p /group/ll010/hgao/conda_env/scFv python=3.10 -y
 conda activate /group/ll010/hgao/conda_env/scFv
 
-
-
-# 下载源码
+download and install hmmer : 
 wget http://eddylab.org/software/hmmer/hmmer-3.3.2.tar.gz
 tar -xvzf hmmer-3.3.2.tar.gz
 cd hmmer-3.3.2
-
-# 指定安装路径，例如 /group/ll010/hgao/apps/hmmer-3.3.2
+customize install path:
 ./configure --prefix=/group/ll010/hgao/apps/hmmer-3.3.2
 make
 make install
-
-##########
-pip install biopython
-
-
-
-# 添加到环境变量
 echo 'export PATH=/group/ll010/hgao/apps/hmmer-3.3.2/bin:$PATH' >> ~/.bashrc
 source ~/.bashrc
 
+pip install biopython
+install ANARCI :
 git clone https://github.com/oxpig/ANARCI.git
 cd ANARCI
 python setup.py install
-
-###########colabbatch
+install colabbatch :
 pip install colabfold[alphafold]
 vim ~/.bashrc
 export COLABFOLD_CACHE_DIR=/group/ll010/hgao/apps/colabfold_cache
-
-######install ProteinMPNN 
+install ProteinMPNN :
 git clone https://github.com/dauparas/ProteinMPNN.git
-
 echo 'export PATH=/group/ll010/hgao/apps/ProteinMPNN:$PATH' >> ~/.bashrc
 source ~/.bashrc
-
 pip install torch torchvision torchaudio
-
 pip install torch==2.1.0+cu113 --index-url https://download.pytorch.org/whl/cu113
-
-#####scFv_Pmpnn_AF2
+install scFv_Pmpnn_AF2 :
+scFv_Pmpnn_AF2
 git clone https://github.com/jbderoo/scFv_Pmpnn_AF2.git
 ~/.bashrc
 /group/ll010/hgao/apps/scFv_Pmpnn_AF2
