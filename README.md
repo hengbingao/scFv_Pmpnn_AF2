@@ -164,7 +164,7 @@ pip install torch torchvision torchaudio
 
 ```bash
 # 克隆仓库
-git clone https://github.com/jbderoo/scFv_Pmpnn_AF2.git
+git clone [https://github.com/jbderoo/scFv_Pmpnn_AF2.git](https://github.com/hengbingao/scFv_Pmpnn_AF2.git)
 
 # 设置路径（假设安装到 apps）
 cd /group/ll010/hgao/apps/scFv_Pmpnn_AF2
