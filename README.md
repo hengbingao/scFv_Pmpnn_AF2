@@ -258,7 +258,7 @@ Decode FASTA files and create split files for parallel running.
 
 ```bash
 # Example command (replace with your actual script or function)
-python decode_fasta.py input.fasta --split 10 --output ./splits/
+step1_decode_fasta.slurm
 ```
 
 This step prepares smaller FASTA chunks for distributed processing.
