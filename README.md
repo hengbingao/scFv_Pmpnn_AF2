@@ -19,6 +19,59 @@ And there are the following python dependencies:
 
 A `requirements.txt` file is not provided because 99% of the setup for this project is getting ANARCI, localcolabfold, and ProteinMPNN set up and operational in a singular environment. The extraneous libraries are very easy to install after getting the major 3 operational. If you find it useful, the conda env for this project is provided in `environment.yaml` - but again, it is highly recommended to install each of the 3 major dependicies independently, and not with this `.yaml` file. 
 
+## Set up code:
+conda remove --name scFv --all
+conda create -p /group/ll010/hgao/conda_env/scFv python=3.10 -y
+conda activate /group/ll010/hgao/conda_env/scFv
+
+
+
+# 下载源码
+wget http://eddylab.org/software/hmmer/hmmer-3.3.2.tar.gz
+tar -xvzf hmmer-3.3.2.tar.gz
+cd hmmer-3.3.2
+
+# 指定安装路径，例如 /group/ll010/hgao/apps/hmmer-3.3.2
+./configure --prefix=/group/ll010/hgao/apps/hmmer-3.3.2
+make
+make install
+
+##########
+pip install biopython
+
+
+
+# 添加到环境变量
+echo 'export PATH=/group/ll010/hgao/apps/hmmer-3.3.2/bin:$PATH' >> ~/.bashrc
+source ~/.bashrc
+
+git clone https://github.com/oxpig/ANARCI.git
+cd ANARCI
+python setup.py install
+
+###########colabbatch
+pip install colabfold[alphafold]
+vim ~/.bashrc
+export COLABFOLD_CACHE_DIR=/group/ll010/hgao/apps/colabfold_cache
+
+######install ProteinMPNN 
+git clone https://github.com/dauparas/ProteinMPNN.git
+
+echo 'export PATH=/group/ll010/hgao/apps/ProteinMPNN:$PATH' >> ~/.bashrc
+source ~/.bashrc
+
+pip install torch torchvision torchaudio
+
+pip install torch==2.1.0+cu113 --index-url https://download.pytorch.org/whl/cu113
+
+#####scFv_Pmpnn_AF2
+git clone https://github.com/jbderoo/scFv_Pmpnn_AF2.git
+~/.bashrc
+/group/ll010/hgao/apps/scFv_Pmpnn_AF2
+pip install torch torchvision torchaudio
+
+
+
 ## Usage
 This pipeline was written with ease of use in mind. There are two scripts worth mentioning here. The first being the scFv-ification of antibody sequences (`scripts/scfv_anarci.py`), and the second being the actual run pipeline itself (`af2_pmpnn.sh`). 
 
