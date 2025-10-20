@@ -251,7 +251,26 @@ To make our sequence selections, we took the top sequences that performed well i
 ## TODO 
 Dockerfile / Docker image
 
-### Usgae on my own pipeline
-step1: 
-sbatch scFv_parallel.slurm.
+# 🧪 Usage on My Own Pipeline
 
+## Step 1️⃣ Decode FASTA Files
+Decode FASTA files and create split files for parallel running.
+
+```bash
+# Example command (replace with your actual script or function)
+python decode_fasta.py input.fasta --split 10 --output ./splits/
+```
+
+This step prepares smaller FASTA chunks for distributed processing.
+
+---
+
+## Step 2️⃣ Submit Parallel Jobs
+
+Use SLURM to run the pipeline in parallel.
+
+```bash
+sbatch step2_scFv_parallel.slurm
+```
+
+This will execute multiple jobs across available compute nodes based on your SLURM configuration.
