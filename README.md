@@ -125,4 +125,6 @@ To make our sequence selections, we took the top sequences that performed well i
 ## TODO 
 Dockerfile / Docker image
 
+###usgae on my pipeline
+sbatch scFv_parallel.slurm
 
