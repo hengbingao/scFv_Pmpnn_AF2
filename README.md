@@ -21,7 +21,7 @@ A `requirements.txt` file is not provided because 99% of the setup for this proj
 
 ## Set up code:
 conda remove --name scFv --all.
-conda create -p /group/ll010/hgao/conda_env/scFv python=3.10 -y.
+conda create -p /group/ll010/hgao/conda_env/scFv python=3.10 -y
 conda activate /group/ll010/hgao/conda_env/scFv.
 
 download and install hmmer : 
@@ -57,7 +57,133 @@ git clone https://github.com/jbderoo/scFv_Pmpnn_AF2.git.
 /group/ll010/hgao/apps/scFv_Pmpnn_AF2.
 pip install torch torchvision torchaudio.
 
+## 1️⃣ 创建并激活 Conda 环境
 
+```bash
+# 删除旧环境（如已存在）
+conda remove --name scFv --all
+
+# 创建新环境（Python 3.10）
+conda create -p /group/ll010/hgao/conda_env/scFv python=3.10 -y
+
+# 激活环境
+conda activate /group/ll010/hgao/conda_env/scFv
+```
+
+---
+
+## 2️⃣ 下载并安装 HMMER
+
+```bash
+# 下载 HMMER 源码
+wget http://eddylab.org/software/hmmer/hmmer-3.3.2.tar.gz
+
+# 解压并进入目录
+tar -xvzf hmmer-3.3.2.tar.gz
+cd hmmer-3.3.2
+
+# 自定义安装路径
+./configure --prefix=/group/ll010/hgao/apps/hmmer-3.3.2
+make
+make install
+
+# 添加到 PATH
+echo 'export PATH=/group/ll010/hgao/apps/hmmer-3.3.2/bin:$PATH' >> ~/.bashrc
+source ~/.bashrc
+```
+
+---
+
+## 3️⃣ 安装 Biopython
+
+```bash
+pip install biopython
+```
+
+---
+
+## 4️⃣ 安装 ANARCI
+
+```bash
+# 克隆 ANARCI 仓库
+git clone https://github.com/oxpig/ANARCI.git
+cd ANARCI
+
+# 安装 ANARCI
+python setup.py install
+```
+
+---
+
+## 5️⃣ 安装 ColabFold（含 AlphaFold）
+
+```bash
+pip install colabfold[alphafold]
+
+# 设置缓存路径
+vim ~/.bashrc
+# 在文件中添加：
+export COLABFOLD_CACHE_DIR=/group/ll010/hgao/apps/colabfold_cache
+
+# 使修改生效
+source ~/.bashrc
+```
+
+---
+
+## 6️⃣ 安装 ProteinMPNN
+
+```bash
+# 克隆 ProteinMPNN 仓库
+git clone https://github.com/dauparas/ProteinMPNN.git
+
+# 添加到 PATH
+echo 'export PATH=/group/ll010/hgao/apps/ProteinMPNN:$PATH' >> ~/.bashrc
+source ~/.bashrc
+```
+
+---
+
+## 7️⃣ 安装 PyTorch
+
+> ⚠️ 如果机器支持 CUDA 11.3：
+
+```bash
+pip install torch==2.1.0+cu113 --index-url https://download.pytorch.org/whl/cu113
+```
+
+> 或安装标准版本：
+
+```bash
+pip install torch torchvision torchaudio
+```
+
+---
+
+## 8️⃣ 安装 scFv_Pmpnn_AF2
+
+```bash
+# 克隆仓库
+git clone https://github.com/jbderoo/scFv_Pmpnn_AF2.git
+
+# 设置路径（假设安装到 apps）
+cd /group/ll010/hgao/apps/scFv_Pmpnn_AF2
+echo 'export PATH=/group/ll010/hgao/apps/scFv_Pmpnn_AF2:$PATH' >> ~/.bashrc
+source ~/.bashrc
+```
+
+---
+
+## ✅ 环境验证
+
+```bash
+# 检查关键组件是否可用
+which hmmscan
+which anarci
+which colabfold_batch
+which python
+python -c "import torch; print(torch.__version__)"
+```
 
 ## Usage
 This pipeline was written with ease of use in mind. There are two scripts worth mentioning here. The first being the scFv-ification of antibody sequences (`scripts/scfv_anarci.py`), and the second being the actual run pipeline itself (`af2_pmpnn.sh`). 
