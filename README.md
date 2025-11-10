@@ -219,7 +219,16 @@ Dockerfile / Docker image
 
 # before you run the pipeline, you  need to move each fasta files into split files!
 
-if you start with the scFv, you must name it like this: Ser2P_scfv.fasta and then move the Ser2P_scfv.fasta into the Ser2P file!
+If you start with the scFv, you must name it like this: Ser2P_scfv.fasta and then move the Ser2P_scfv.fasta into the Ser2P file!
+
+```bash
+for i in BRD7 CHD2 SMARCA2 SMARCA4 SMARCC2
+do
+mkdir -p ${i}
+mv ${i}_IgG.fasta ./${i}
+mv ${i}_IgG.pdb ./${i}
+done
+```
 
 ## Step 1️⃣ Decode FASTA Files
 Decode FASTA files and create split files for parallel running.
