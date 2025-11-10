@@ -217,12 +217,7 @@ Dockerfile / Docker image
 
 # 🧪 Usage on My Own Pipeline
 
-# before you run the pipeline, you have to move each fasta files into split files:
-for i in BRD7 CHD2 SMARCA2 SMARCA4 SMARCC2
-do
-mv ${i}_IgG.pdb ./${i}
-done
-
+# before you run the pipeline, you don't need to move each fasta files into split files!
 
 ## Step 1️⃣ Decode FASTA Files
 Decode FASTA files and create split files for parallel running.
