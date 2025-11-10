@@ -217,7 +217,9 @@ Dockerfile / Docker image
 
 # 🧪 Usage on My Own Pipeline
 
-# before you run the pipeline, you don't need to move each fasta files into split files!
+# before you run the pipeline, you  need to move each fasta files into split files!
+
+if you start with the scFv, you must name it like this: Ser2P_scfv.fasta and then move the Ser2P_scfv.fasta into the Ser2P file!
 
 ## Step 1️⃣ Decode FASTA Files
 Decode FASTA files and create split files for parallel running.
