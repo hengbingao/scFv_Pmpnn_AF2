@@ -16,7 +16,7 @@ if [ -z "$1" ]; then
 fi
 
 folder_with_pdbs="$1"
-seqs_per_run=15
+seqs_per_run=25
 determine_CDRs='martin'
 ss_near_CDRs=3
 simple_grab=true
